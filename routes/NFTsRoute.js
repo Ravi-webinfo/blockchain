@@ -156,4 +156,25 @@ Router.put('/', passport.authenticate('jwt', {session: false, failureRedirect: '
     
 })
 
+Router.delete('/', passport.authenticate('jwt', {session:false, failureRedirect: '/unauthorized'}), (req, res) => {
+    const errors = {
+        ids: []
+    }
+    if(!req.body.ids) {
+        errors.ids.push("Ids are required.");
+        return res.status(403).json({success:false, errors });
+    } else {
+        nft.deleteMany({_id: {$in: req.body.ids}, mint_id: ''}, function(err, result) {
+            if(err) throw err;
+            else {
+                if(result.deletedCount > 0) {
+                    return res.status(200).json({success:true, message: "Deleted successfully."});
+                } else {
+                    return res.status(403).json({success:false, message: "You cant delete minted nfts."});
+                }
+            }
+        })
+    }
+})
+
 module.exports = Router;
