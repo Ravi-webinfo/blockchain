@@ -10,7 +10,7 @@ const app = new express();
 
 
 // Global middleware.
-// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cors());
 app.use(FileUpload());
@@ -25,7 +25,7 @@ app.use("/wallet", require('./routes/WalletRoute'));
 app.use("/nfts", require('./routes/NFTsRoute'));
 
 
-app.get('/', passport.authenticate('jwt', {session: false, failureRedirect: '/unauthorized'}), (req, res) => {
+app.get('/auth', passport.authenticate('jwt', {session: false, failureRedirect: '/unauthorized'}), (req, res) => {
   return res.status(200).json({success:true, message: 'User authorized successfully.', user: {
     username: req.user.username,
     email: req.user.email,
